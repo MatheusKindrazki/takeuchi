@@ -1,0 +1,16 @@
+
+# 5 de janeiro de 2020
+
+- Criar estrutura de pastas do projeto
+- Instalar e configurar cors
+- Adicionar dotenv e configurar variáveis de ambiente
+- instalar sequelize ( postgres e dependências )
+- Adicionar tipos do validator e bluebird
+- Configurar Sequelize em toda sua essencia
+- Criar primeiro controller de usuário
+
+# 7 de janeiro de 2020
+- CRUD completo do usuário
+- Criar tratamento de erros globais ( instalar express-async-errors )
+- Autenticar uma rota
+- Criar validações de parâmetros

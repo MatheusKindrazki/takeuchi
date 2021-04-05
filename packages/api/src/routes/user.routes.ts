@@ -7,5 +7,6 @@ const userRoutes = Router();
 const User = new UserController();
 
 userRoutes.get('/', User.index);
+userRoutes.post('/', User.store);
 
 export default userRoutes;
