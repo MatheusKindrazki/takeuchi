@@ -1,4 +1,4 @@
-import { Controller, Response, Request } from 'express';
+import { Controller, Response } from 'express';
 
 import bcrypt from 'bcrypt';
 
@@ -7,11 +7,16 @@ import Users from '../../../database/models/Users';
 import { UserRequest } from './types';
 
 class UserController implements Controller {
-  async index(req: Request, res: Response): Promise<Response> {
-    const users = await Users.findAll({
+  async index(req: UserRequest, res: Response): Promise<Response> {
+    const { orderBy, orderName, page, quantity } = req.filters;
+
+    const { rows: users, count } = await Users.findAndCountAll({
+      limit: quantity,
+      offset: (page - 1) * quantity,
       attributes: {
         exclude: ['password_hash'],
       },
+      order: [[orderName, orderBy]],
     });
 
     if (!users) {
@@ -20,7 +25,7 @@ class UserController implements Controller {
       });
     }
 
-    return res.json(users);
+    return res.set({ 'Total-pages': Math.ceil(count / quantity) }).json(users);
   }
 
   async store(req: UserRequest, res: Response): Promise<Response> {
@@ -30,15 +35,20 @@ class UserController implements Controller {
       where: { email },
     });
 
-    const password_hash = await bcrypt.hash(password, 10);
-
     if (findUser) {
       return res.status(400).json({
         error: 'E-mail já cadastrado!',
       });
     }
 
-    return res.json({ password_hash });
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const response = await Users.create({
+      ...req.body,
+      password_hash,
+    });
+
+    return res.json(response);
   }
 }
 
